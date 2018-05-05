@@ -1,44 +1,20 @@
-function curry(uncurried) {
-  let args = Array.prototype.slice.call(arguments, 1);
-  return function() {
-    return uncurried.apply(
-      this,
-      args.concat(Array.prototype.slice.call(arguments, 0))
-    );
-  };
-}
+export const PORT = 8080;
 
-import { pipe } from "./helpers";
-
-const initRouteValues = {
-  get: [],
-  post: [],
-  put: []
+export const METHODS = {
+  GET: [],
+  PUT: []
 };
 
-const initMap = initMapValues =>
-  Object.keys(initMapValues).reduce(
-    (map, key) => map.set(key, initMapValues[key]),
-    new Map()
-  );
-
-export const apiRoutes = pipe(initMap)(initRouteValues);
-
-const registerRoute = (routes, method, route, handler) => {
-  // TODO add regex match
-  return routes.set(method, [...routes.get(method), { route, handler }]);
+export const REGEX = {
+  username: /^[a-zA-Z0-9_-]{3,}$/,
+  email: /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+  password: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/,
+  message: /^.{1,}$/
 };
 
-const app = {
-  get: curry(registerRoute, apiRoutes, "get"),
-  post: curry(registerRoute, apiRoutes, "post")
+export const DB = {
+  users: "users",
+  messages: "messages"
 };
 
-export function handleRequest(request, response) {
-  console.log(request.method, request.url);
-  response.writeHead(200, { "Content-Type": "application/json" });
-  response.end(JSON.stringify({ working: "yes" }));
-}
-
-
-export default app;
+export const SALT = "$2a$04$T/8s.3kcYRc5l4kzV/pAs."; // NOTE: bp example
